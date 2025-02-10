@@ -1,0 +1,84 @@
+Go to Ec2 Instance, then select Security Groups, click on Create Security Group,
+Give it a name (TaousTeck), Description (TaousTeck)
+Click on Inbound Rules,
+add HTTP (port 80), HTTPS (port 443), and SSH (port 22), the click on Security Groups
+Now, weneed to create an EC2 Instance, give it a name, Amazon Linux, Instance type = t2.small, slect key pair login,
+Select the subnet (east a1)
+Select existing security group, then search it
+Click on advanced details, then scroll down to the end, then paste this (Apache server):
+*****
+#!/bin/bash
+# Use this for your user data (script from top to bottom)
+# install httpd (Linux 2 version)
+yum update -y
+yum install -y httpd
+systemctl start httpd
+systemctl enable httpd
+echo "<h1>Hello from PIIT from (service) $(hostname -f)</h1>" > /var/www/html/index.html (this is related to the index.html page that we are echoing here)
+*****
+then launch the instance
+Create the 2nd EC2 Instance, follow same steps as the 1st instance, the only difference is the subnet (east - 1b),
+go to EC2, on the left panel, scoll down to Load Balancers
+select it, then click on Create load balancer, pick application LB
+give it a name (TaousTeck-LB), at the Mappings sections, select all the Availibility Zones
+in the Security Groups section, select the one that was created at the beginning and remove the default one
+Then click on Create taget group to create one
+keep the the ype as Instances, 
+Give it a name (TaousTeck-TG),
+under Health Checks, add: /index.html (the name of the html file that we use), click Next
+Check the 2 instances, then click on "Include as pending below" button, then click on Create Target Group.
+Go back to the Load Balancer page, click on refresh
+Select the created Target Group, then click on Create Load Balancer
+to verify that Load Balancer is ready, copy the DNS name under the Load Balancer, and paste it in the browser (use http: )
+Go back to the EC2, scoll down to Auto Scaling Groups
+Click on Create Auto Scaling Group
+Give it a name (TaousTeck-ASG), then click on Create a launch template, then click Next
+Give it a name (TaousTeck-Launch-Template), Description (TaousTeck-Launch-Template), select AMI as Amazon Linux
+At the Instance Type, select t2.small
+Select a key pair
+under Network settings, use an existing security group, search the previously created security group
+Scroll all the way down, then paste this:
+******
+#!/bin/bash
+# Use this for your user data (script from top to bottom)
+# install httpd (Linux 2 version)
+yum update -y
+yum install -y httpd
+systemctl start httpd
+systemctl enable httpd
+echo "<h1>Hello from PIIT from (service) $(hostname -f)</h1>" > /var/www/html/index.html
+**********
+Go back the Auto Scaling Group page, click on refresh, then select the created launch template (TaousTeck-Launch-Template)
+Click Next
+for Availibity Zones and subnets, select all of them 
+Click Next
+At Load Balancer section, select Attach to an existing lead balancer
+At the Attache to an existing loadbalancer, select the created one (TaousTeck-LB)
+Scoll down to the end, at Health check grace period, put 15 seconds
+Click Next
+At Group size, enter the desired capacity of the instances (6)
+At Scaling, enter the Min desired capacity (2) and the Max desired capacity (8)
+Click Next
+At Add notifictions, click Next
+At Add tags, click Next
+Clcik at Create Auto Scaling group,
+Click on the created Auto Scaling groups, click on Activity, you will see all the created instances
+You can also see these created instances by the Auto Scaling under EC2 as well
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
