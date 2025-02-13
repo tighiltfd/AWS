@@ -64,7 +64,14 @@ At Add tags, click Next
 Clcik at Create Auto Scaling group,
 Click on the created Auto Scaling groups, click on Activity, you will see all the created instances
 You can also see these created instances by the Auto Scaling under EC2 as well
-
+You cam also check the Target Group where you cann see all the instances
+if you refresh the Elastic Load balancer DNS, as you refresh, you will see all the IPs in the DNS and all are synchronized.
+Now, we simulate that 2 or 3 Instances are down for any reason, as soo as these crushed, 
+the new instances will be lauched by the auto scaling group to replace the crushed ones automatically.
+To verift that, go to the Auto Scaling Group, scowll down, click on the activity, you will see that new instances started being launched.
+The next step is to go the Target Group, where you gonna see that new instances are coming. 
+The whole process will take some time to be completed.
+Same process will be followed for scaling down scenario.
 
 
 
